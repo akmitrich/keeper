@@ -13,6 +13,7 @@ pub enum Error {
     Io(std::io::Error), // as example
     #[from]
     NoCurrentRuntime(tokio::runtime::TryCurrentError),
+    RouteNotFound(serde_json::Value),
 }
 
 // region:    --- Custom
@@ -46,6 +47,7 @@ impl std::error::Error for Error {}
 impl ResponseError for Error {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
+            Error::RouteNotFound(_) => actix_web::http::StatusCode::NOT_FOUND,
             _ => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
