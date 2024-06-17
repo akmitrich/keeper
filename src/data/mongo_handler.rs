@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct MongoHandler {
-    client: mongodb::Client,
+    pub client: mongodb::Client,
 }
 
 impl MongoHandler {

@@ -13,6 +13,8 @@ pub enum Error {
     Io(std::io::Error), // as example
     #[from]
     NoCurrentRuntime(tokio::runtime::TryCurrentError),
+    #[from]
+    MongoDBFailed(mongodb::error::Error),
     RouteNotFound(serde_json::Value),
 }
 

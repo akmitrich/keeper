@@ -1,10 +1,12 @@
-use actix_web::{get, web, HttpRequest};
+mod upload_scenario;
 
 use crate::data::start_time::StartTime;
+use actix_web::{get, web, HttpRequest};
 
 pub fn main_route_factory(config: &mut web::ServiceConfig) {
     config
         .service(health_check)
+        .service(upload_scenario::upload)
         .default_service(web::route().to(not_found));
 }
 
