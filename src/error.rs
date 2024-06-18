@@ -15,6 +15,8 @@ pub enum Error {
     NoCurrentRuntime(tokio::runtime::TryCurrentError),
     #[from]
     MongoDBFailed(mongodb::error::Error),
+    #[from]
+    BSonSerialization(mongodb::bson::ser::Error),
     RouteNotFound(serde_json::Value),
 }
 
