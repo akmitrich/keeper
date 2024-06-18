@@ -1,3 +1,4 @@
+mod download_scenario;
 mod upload_scenario;
 
 use crate::data::start_time::StartTime;
@@ -7,6 +8,7 @@ pub fn main_route_factory(config: &mut web::ServiceConfig) {
     config
         .service(health_check)
         .service(upload_scenario::upload)
+        .service(download_scenario::download)
         .default_service(web::route().to(not_found));
 }
 

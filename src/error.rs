@@ -16,7 +16,12 @@ pub enum Error {
     #[from]
     MongoDBFailed(mongodb::error::Error),
     #[from]
-    BSonSerialization(mongodb::bson::ser::Error),
+    BsonSerialization(mongodb::bson::ser::Error),
+    #[from]
+    JsonSerialization(serde_json::Error),
+
+    // -- Internals
+    ValueNotFound(String),
     RouteNotFound(serde_json::Value),
 }
 
@@ -51,6 +56,8 @@ impl std::error::Error for Error {}
 impl ResponseError for Error {
     fn status_code(&self) -> actix_web::http::StatusCode {
         match self {
+            Error::MongoDBFailed(_) => actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+            Error::ValueNotFound(_) => actix_web::http::StatusCode::NOT_ACCEPTABLE,
             Error::RouteNotFound(_) => actix_web::http::StatusCode::NOT_FOUND,
             _ => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
         }
