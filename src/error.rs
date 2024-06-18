@@ -14,6 +14,8 @@ pub enum Error {
     #[from]
     NoCurrentRuntime(tokio::runtime::TryCurrentError),
     #[from]
+    SystemTimeStamp(std::time::SystemTimeError),
+    #[from]
     MongoDBFailed(mongodb::error::Error),
     #[from]
     BsonSerialization(mongodb::bson::ser::Error),

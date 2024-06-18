@@ -1,6 +1,9 @@
 use crate::data::mongo_handler::MongoHandler;
 use actix_web::{http::StatusCode, post, web, HttpResponse};
-use mongodb::bson::Document;
+use mongodb::{
+    bson::{self, doc, Document},
+    Collection,
+};
 
 #[post("/upload/{namespace}/{id}/{version}")]
 async fn upload(
@@ -11,6 +14,25 @@ async fn upload(
     let (namespace, id, version) = path.into_inner();
     let db = handler.client.database(&namespace);
     let coll = db.collection::<Document>(&id);
-    handler.keep_value(coll, version, &body).await?;
+    keep_value(coll, version, &body).await?;
     Ok(HttpResponse::new(StatusCode::ACCEPTED))
+}
+
+pub async fn keep_value(
+    coll: Collection<Document>,
+    id: String,
+    value: &serde_json::Value,
+) -> crate::Result<()> {
+    let inserted = coll
+        .insert_one(
+            doc! {
+                "_id": id,
+                "_ts": std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_secs_f64(),
+                "value": bson::to_bson(value)?,
+            },
+            None,
+        )
+        .await?;
+    log::info!("Inserted {:?}", inserted.inserted_id);
+    Ok(())
 }
