@@ -16,6 +16,7 @@ pub fn main_route_factory(config: &mut web::ServiceConfig) {
 async fn health_check(
     start_time: web::Data<StartTime>,
 ) -> crate::Result<web::Json<serde_json::Value>> {
+    log::info!("Checked at {:?}", std::time::SystemTime::now());
     let start: chrono::DateTime<chrono::Local> = start_time.start_time().into();
     let alive = start_time.alive();
     Ok(web::Json(serde_json::json!({
@@ -25,6 +26,7 @@ async fn health_check(
 }
 
 async fn not_found(req: HttpRequest) -> crate::Result<web::Json<()>> {
+    log::error!("Failed request: {:?}", req);
     Err(crate::Error::RouteNotFound(serde_json::json!({
         "request": format!("Request: {:?}.", req),
         "description": "Не зная броду, не лезь в воду."

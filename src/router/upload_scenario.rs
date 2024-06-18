@@ -11,6 +11,7 @@ async fn upload(
     body: web::Json<serde_json::Value>,
     handler: web::Data<MongoHandler>,
 ) -> crate::Result<HttpResponse> {
+    log::trace!("Store into: {:?}", path);
     let (namespace, id, version) = path.into_inner();
     let db = handler.client.database(&namespace);
     let coll = db.collection::<Document>(&id);

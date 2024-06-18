@@ -11,6 +11,7 @@ pub async fn download(
     path: web::Path<(String, String, String)>,
     handler: web::Data<MongoHandler>,
 ) -> crate::Result<web::Json<serde_json::Value>> {
+    log::trace!("Download from: {:?}", path);
     let (namespace, id, version) = path.into_inner();
     let db = handler.client.database(&namespace);
     let coll = db.collection::<Document>(&id);
